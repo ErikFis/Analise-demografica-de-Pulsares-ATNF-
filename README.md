@@ -1,96 +1,82 @@
-# Neutron Star Observational Database
+# Data Science em Astrofísica: Demografia de Pulsares
 
-## 1. Project Overview
-This repository contains a dedicated data engineering and data science project focused on building a structured, reproducible, and queryable relational database of observed **Neutron Star** properties from public astronomical catalogs.
+Este repositório é um **projeto de Ciência de Dados e Engenharia de Dados** que constrói uma infraestrutura completa de ingestão, tratamento e análise exploratória (EDA) de dados observacionais de estrelas de nêutrons, consumindo o **Catálogo de Pulsares do ATNF (Australia Telescope National Facility)**. 
 
-The primary goal of this repository is to demonstrate practical mastery of data engineering, data cleaning, relational data modeling, SQL/PostgreSQL database construction, exploratory data analysis, and statistical visualization using Python.
+O foco deste projeto é a exploração das propriedades físicas das estrelas de nêutrons — como período de rotação, campo magnético superficial e idades características — e a identificação de subpopulações e aglomerados globulares.
 
-```
-Public Astronomical Catalogs (e.g., ATNF)
-                 │
-                 ▼
-       ┌───────────────────┐
-       │   Raw Data Ingest │
-       └─────────┬─────────┘
-                 │
-                 ▼
-       ┌───────────────────┐
-       │ Data Validation & │
-       │    Cleaning       │
-       └─────────┬─────────┘
-                 │
-                 ▼
-       ┌───────────────────┐
-       │ Relational Model  │
-       │   & PostgreSQL    │
-       └─────────┬─────────┘
-                 │
-                 ▼
-       ┌───────────────────┐
-       │ Analytical SQL &  │
-       │ Scientific Outputs│
-       └───────────────────┘
-```
+---
 
-## 2. Motivation & Technical Context
-- **Professional Objectives**: Build an end-to-end data pipeline demonstrating core Data Analyst / Data Engineer competencies: SQL, PostgreSQL, Python (Pandas, NumPy, Astropy, SciPy), normalization, data provenance tracking, and data cleaning.
-- **Scientific Context**: While initial datasets draw heavily from pulsar catalogs (such as the ATNF Pulsar Catalogue), the database architecture is designed for neutron stars broadly—including pulsars, millisecond pulsars, magnetars, isolated neutron stars, and binary neutron star systems.
-- **Data Provenance & Rigor**: Raw data is never modified. Direct observational measurements are strictly separated from physical derived parameters (e.g., characteristic age, magnetic field estimates).
+## Objetivos do Projeto
 
-## 3. Key Target Observational Properties
-- **Identification & Coordinates**: Name, RA/DEC, Galactic Coordinates ($l, b$), Distance.
-- **Rotational Parameters**: Period ($P$), Period derivative ($\dot{P}$), Frequency ($f$).
-- **Physical Quantities**: Mass ($M$), Radius ($R$), Thermal Temperature ($T$), Magnetic Field ($B$), Luminosity ($L$).
-- **Environmental & Companion Data**: Binary companion type, orbital period, eccentricity.
-- **Metadata**: Uncertainties, measurement references, and data sources.
+1. **Tratamento de Dados do ATNF:** Automatizar o download, limpeza e categorização dos dados brutos do ATNF, focando nos parâmetros físicos relevantes.
+2. **Análise Estatística da População:** Explorar as distribuições (bimodais) de pulsares normais, milissegundo pulsares (MSPs), magnetares e outras classes exóticas.
+3. **Física dos Parâmetros:** Analisar e visualizar a física intrínseca dessas estrelas através do clássico diagrama $P - \dot{P}$ (Período vs. Derivada do Período).
+4. **Mapeamento de Aglomerados:** Mapear a distribuição galáctica (coordenadas $l, b$) para identificar aglomerados globulares (ex: 47 Tucanae) e separar fontes extragalácticas (Nuvens de Magalhães).
 
-## 4. Technologies Used
-- **Language**: Python 3.10+
-- **Data Engineering & Analysis**: Pandas, NumPy, Astropy, SciPy
-- **Database**: PostgreSQL, SQL, SQLAlchemy, Alembic / psycopg2
-- **Visualization**: Matplotlib, Seaborn
-- **Testing & Quality**: pytest, flake8, black
+---
 
-## 5. Repository Structure
-```
-neutron-star-observational-database/
-├── README.md
-├── PROJECT_PLAN.md
-├── LEARNING_OBJECTIVES.md
-├── DATA_DICTIONARY.md
-├── DATABASE_DESIGN.md
-├── DATA_PIPELINE.md
-├── SCIENTIFIC_METHODOLOGY.md
-├── STATISTICAL_ANALYSIS.md
-├── LIMITATIONS.md
-├── DECISIONS.md
-├── CHANGELOG.md
+## Estrutura do Repositório
+
+```text
+.
 ├── data/
-│   ├── raw/
-│   ├── interim/
-│   ├── processed/
-│   └── derived/
-├── database/
-│   ├── schema/
-│   ├── migrations/
-│   ├── seeds/
-│   └── queries/
+│   ├── raw/             # Dados brutos extraídos diretamente do ATNF (imutáveis)
+│   └── interim/         # Dados limpos e categorizados (catalog_categorized.csv)
 ├── notebooks/
-├── src/
-│   ├── ingestion/
-│   ├── cleaning/
-│   ├── transformation/
-│   ├── validation/
-│   ├── database/
-│   └── analysis/
-├── tests/
-├── figures/
-└── docs/
+│   ├── 01_data_exploration/    # Download e exploração inicial do catálogo
+│   ├── 02_sky_map/             # Explorações de mapas do céu (rascunhos)
+│   └── 03_statistical_analysis/# Análise estatística completa, gráficos e descoberta de aglomerados
+├── figures/             # Gráficos gerados pelas análises (Diagramas P-Pdot, Mapas Galácticos)
+└── .gitignore
 ```
 
-## 6. Reproducibility & Setup
-Detailed instructions for setting up the Python virtual environment and local PostgreSQL database instance will be documented progressively as ingestion scripts are finalized.
+---
 
-## 7. Project Limitations
-- **Selection Biases**: Observed populations do not equal intrinsic physical populations due to observational flux/distance cutoffs.
-- **Missing Data**: Not all neutron stars have measured masses, radii, or thermal emissions. Missing parameters are handled explicitly without artificial imputation in the core database.
+## Principais Análises
+
+As análises estatísticas e físicas podem ser encontradas em [`notebooks/03_statistical_analysis/03_statistical_analysis.ipynb`](notebooks/03_statistical_analysis/03_statistical_analysis.ipynb), onde abordamos:
+
+### 1. Categorização da População
+As estrelas de nêutrons foram categorizadas de acordo com suas propriedades físicas e de emissão:
+- **Pulsares Normais**: População jovem/média do disco galáctico.
+- **MSP (Millisecond Pulsars)**: Pulsares velhos "reciclados" com altas velocidades de rotação ($P < 30$ ms).
+- **Magnetares (AXP/SGR)**: Campos magnéticos extremos ($> 10^{14}$ Gauss).
+- **RRAT, XINS, HE, NRAD**: Outras classes exóticas e subpopulações isoladas.
+
+### 2. O Diagrama $P - \dot{P}$
+Construímos o diagrama $P - \dot{P}$, o equivalente ao Diagrama HR para estrelas de nêutrons, ilustrando as "ilhas" de MSPs, a nuvem principal de pulsares de rádio e a posição isolada dos magnetares. A partir destas duas variáveis ($P$ e $\dot{P}$), derivamos o Campo Magnético Superficial ($B$) e a Idade Característica ($\tau$).
+
+### 3. Mapeamento Galáctico e Aglomerados Globulares
+A distribuição das estrelas no céu (projeção de Mollweide) revela um alinhamento claro com o plano galáctico, mas também subestruturas notáveis:
+- **Aglomerados Globulares**: Identificamos concentrações densas de MSPs em locais como **47 Tucanae (NGC 104)**, **M15**, **NGC 1851** e **NGC 6752**.
+- **Fontes Extragalácticas**: Separamos visualmente fontes localizadas nas **Pequena e Grande Nuvens de Magalhães (SMC / LMC)**, que se sobrepõem visualmente ao aglomerado 47 Tuc devido à projeção 2D do céu.
+
+---
+
+## Como Executar
+
+O projeto utiliza a biblioteca `psrqpy` para ingestão dos dados. 
+
+1. Clone o repositório:
+```bash
+git clone https://github.com/SEU-USUARIO/demografia-de-pulsares.git
+cd demografia-de-pulsares
+```
+
+2. Crie um ambiente conda e instale as dependências:
+```bash
+conda create -n neutron-stars python=3.11
+conda activate neutron-stars
+pip install psrqpy pandas numpy matplotlib jupyter
+```
+
+3. Abra os notebooks:
+```bash
+jupyter notebook
+```
+Explore a pasta `notebooks/` sequencialmente.
+
+---
+
+## Licença
+Este projeto é de código aberto. Sinta-se livre para utilizar, modificar e distribuir conforme necessário.
