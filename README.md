@@ -1,6 +1,6 @@
 # Data Science em Astrofísica: Demografia de Pulsares
 
-Este repositório é um **projeto de Ciência de Dados e Engenharia de Dados** que constrói uma infraestrutura completa de ingestão, tratamento e análise exploratória (EDA) de dados observacionais de estrelas de nêutrons, consumindo o **Catálogo de Pulsares do ATNF (Australia Telescope National Facility)**. 
+Este repositório é um projeto de Ciência de Dados e Engenharia de Dados que constrói uma infraestrutura completa de ingestão, tratamento e análise exploratória (EDA) de dados observacionais de estrelas de nêutrons, consumindo o Catálogo de Pulsares do ATNF (Australia Telescope National Facility).
 
 O foco deste projeto é a exploração das propriedades físicas das estrelas de nêutrons — como período de rotação, campo magnético superficial e idades características — e a identificação de subpopulações e aglomerados globulares.
 
@@ -20,54 +20,57 @@ O foco deste projeto é a exploração das propriedades físicas das estrelas de
 ```text
 .
 ├── data/
-│   ├── raw/             # Dados brutos extraídos diretamente do ATNF (imutáveis)
-│   └── interim/         # Dados limpos e categorizados (catalog_categorized.csv)
+│   ├── raw/                 # Dados brutos extraídos diretamente do ATNF (atnf_raw_arquivos)
+│   ├── interim/             # Dados intermediários de processamento
+│   └── processed/           # Dados limpos e categorizados (catalog_categorized.csv)
 ├── notebooks/
-│   ├── 01_data_exploration/    # Download e exploração inicial do catálogo
-│   ├── 02_sky_map/             # Explorações de mapas do céu (rascunhos)
-│   └── 03_statistical_analysis/# Análise estatística completa, gráficos e descoberta de aglomerados
-├── figures/             # Gráficos gerados pelas análises (Diagramas P-Pdot, Mapas Galácticos)
-└── .gitignore
+│   ├── 01_data_exploration/    # Ingestão do catálogo, dados faltantes e mapa galáctico bruto
+│   ├── 02_statistical_analysis/# Análise estatística, diagrama P-Pdot e busca por aglomerados
+│   └── 03_data_categorization/ # Pipeline final de categorização e exportação dos dados
+├── figures/                 # Gráficos gerados pelas análises (Diagramas P-Pdot, Mapas Galácticos)
+└── README.md
 ```
 
 ---
 
-## Principais Análises
+## Principais Análises e Notebooks
 
-As análises estatísticas e físicas podem ser encontradas em [`notebooks/03_statistical_analysis/03_statistical_analysis.ipynb`](notebooks/03_statistical_analysis/03_statistical_analysis.ipynb), onde abordamos:
+### 1. Ingestão e Exploração Inicial (`01_catalog_exploration.ipynb`)
+- Download automatizado do catálogo observacional do ATNF via `psrqpy`.
+- Inspeção da qualidade dos dados e cálculo de percentuais de valores nulos por coluna.
+- Visualização preliminar da distribuição espacial bruta no céu em coordenadas galácticas.
 
-### 1. Categorização da População
-As estrelas de nêutrons foram categorizadas de acordo com suas propriedades físicas e de emissão:
-- **Pulsares Normais**: População jovem/média do disco galáctico.
-- **MSP (Millisecond Pulsars)**: Pulsares velhos "reciclados" com altas velocidades de rotação ($P < 30$ ms).
-- **Magnetares (AXP/SGR)**: Campos magnéticos extremos ($> 10^{14}$ Gauss).
-- **RRAT, XINS, HE, NRAD**: Outras classes exóticas e subpopulações isoladas.
+### 2. Análise Estatística e Estrutura da População (`02_statistical_analysis.ipynb`)
+- **Categorização da População**: Regras heurísticas e físicas para consolidação da coluna `TYPE`:
+  - **Pulsares Normais**: População do disco galáctico.
+  - **MSP (Millisecond Pulsars)**: Inferidos fisicamente via Período de Rotação ($P < 30$ ms).
+  - **Magnetares (AXP/SGR)**: Campos magnéticos extremos ($> 10^{14}$ Gauss).
+  - **RRAT, XINS, HE, NRAD**: Classes exóticas e subpopulações com emissões específicas.
+- **O Diagrama $P - \dot{P}$**: Visualização equivalente ao Diagrama HR para estrelas de nêutrons, destacando ilhas evolutivas de MSPs e Magnetares.
+- **Mapeamento Galáctico e Aglomerados Globulares**: 
+  - Mapeamento em projeção de Mollweide em coordenadas galácticas ($l, b$).
+  - Identificação e filtro de aglomerados globulares densos: **47 Tucanae (NGC 104)**, **M15**, **NGC 1851** e **NGC 6752**.
+  - Separação de fontes extragalácticas (**Nuvens de Magalhães - SMC / LMC**), que aparecem sobrepostas visualmente em projeção 2D.
 
-### 2. O Diagrama $P - \dot{P}$
-Construímos o diagrama $P - \dot{P}$, o equivalente ao Diagrama HR para estrelas de nêutrons, ilustrando as "ilhas" de MSPs, a nuvem principal de pulsares de rádio e a posição isolada dos magnetares. A partir destas duas variáveis ($P$ e $\dot{P}$), derivamos o Campo Magnético Superficial ($B$) e a Idade Característica ($\tau$).
-
-### 3. Mapeamento Galáctico e Aglomerados Globulares
-A distribuição das estrelas no céu (projeção de Mollweide) revela um alinhamento claro com o plano galáctico, mas também subestruturas notáveis:
-- **Aglomerados Globulares**: Identificamos concentrações densas de MSPs em locais como **47 Tucanae (NGC 104)**, **M15**, **NGC 1851** e **NGC 6752**.
-- **Fontes Extragalácticas**: Separamos visualmente fontes localizadas nas **Pequena e Grande Nuvens de Magalhães (SMC / LMC)**, que se sobrepõem visualmente ao aglomerado 47 Tuc devido à projeção 2D do céu.
+### 3. Pipeline de Categorização (`03_categorization.ipynb`)
+- Execução do pré-processamento estruturado.
+- Salvamento do catálogo rotulado em `data/processed/catalog_categorized.csv` para consumo seguro em etapas futuras de Machine Learning.
 
 ---
 
 ## Como Executar
 
-O projeto utiliza a biblioteca `psrqpy` para ingestão dos dados. 
-
 1. Clone o repositório:
 ```bash
-git clone https://github.com/SEU-USUARIO/demografia-de-pulsares.git
-cd demografia-de-pulsares
+git clone https://github.com/ErikFis/Analise-demografica-de-Pulsares-ATNF-.git
+cd Analise-demografica-de-Pulsares-ATNF-
 ```
 
 2. Crie um ambiente conda e instale as dependências:
 ```bash
 conda create -n neutron-stars python=3.11
 conda activate neutron-stars
-pip install psrqpy pandas numpy matplotlib jupyter
+pip install psrqpy pandas numpy matplotlib astropy jupyter
 ```
 
 3. Abra os notebooks:
@@ -79,4 +82,5 @@ Explore a pasta `notebooks/` sequencialmente.
 ---
 
 ## Licença
+
 Este projeto é de código aberto. Sinta-se livre para utilizar, modificar e distribuir conforme necessário.
