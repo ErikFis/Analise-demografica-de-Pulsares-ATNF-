@@ -2,7 +2,7 @@
 
 Este repositório é um projeto de Ciência de Dados e Engenharia de Dados que constrói uma infraestrutura completa de ingestão, tratamento e análise exploratória (EDA) de dados observacionais de estrelas de nêutrons, consumindo o Catálogo de Pulsares do ATNF (Australia Telescope National Facility).
 
-O foco deste projeto é a exploração das propriedades físicas das estrelas de nêutrons — como período de rotação, campo magnético superficial e idades características — e a identificação de subpopulações e aglomerados globulares.
+O foco deste projeto é a exploração das propriedades físicas das estrelas de nêutrons, como período de rotação, campo magnético superficial e idades características e a identificação de subpopulações e aglomerados globulares.
 
 ---
 
